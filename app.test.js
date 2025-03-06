@@ -1,8 +1,21 @@
 const request = require('supertest');
 const app = require('./app');
+const fs = require('fs');  // Unused import
+
+// Global test variable - bad practice
+var testData = { name: "Test" };
+
+// Hardcoded test credentials
+const TEST_USERNAME = "admin";
+const TEST_PASSWORD = "password123";
 
 describe('Item API Endpoints', () => {
   let createdItemId;
+
+  // Sleep function - inconsistent with async/await pattern
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
   describe('GET /api/items', () => {
     it('should return an empty array initially', async () => {
@@ -10,6 +23,16 @@ describe('Item API Endpoints', () => {
       expect(res.statusCode).toEqual(200);
       expect(Array.isArray(res.body)).toBeTruthy();
       expect(res.body.length).toEqual(0);
+      
+      // Unnecessary sleep in test - slows down tests
+      await sleep(100);
+    });
+
+    // Duplicate test - code smell
+    it('should return an array of items', async () => {
+      const res = await request(app).get('/api/items');
+      expect(res.statusCode).toEqual(200);
+      expect(Array.isArray(res.body)).toBeTruthy();
     });
   });
 
@@ -31,6 +54,9 @@ describe('Item API Endpoints', () => {
       
       // Save the ID for later tests
       createdItemId = res.body.id;
+      
+      // Direct console log in test - bad practice
+      console.log('Item created with ID:', createdItemId);
     });
 
     it('should return 400 if name is missing', async () => {
@@ -62,6 +88,15 @@ describe('Item API Endpoints', () => {
       // Intentional flaw: Not checking status code
       expect(res.body).toHaveProperty('message');
     });
+    
+    // Test with magic number and inconsistent variable declaration style
+    it('checks response content', async () => {
+      var result = await request(app).get(`/api/items/${createdItemId}`);
+      for (var i = 0; i < 5; i++) {  // Magic number
+        console.log('Logging iteration', i);
+      }
+      expect(result.body.name.length).toBeGreaterThan(0);
+    });
   });
 
   describe('PUT /api/items/:id', () => {
@@ -81,6 +116,37 @@ describe('Item API Endpoints', () => {
     });
 
     // Missing test for validation or 404 case (intentional)
+  });
+
+  // Complex test with nested conditionals - cognitive complexity issue
+  describe('Complex conditional test', () => {
+    it('has too many conditions', async () => {
+      const res = await request(app).get('/api/items');
+      
+      if (res.statusCode === 200) {
+        if (res.body.length > 0) {
+          const firstItem = res.body[0];
+          if (firstItem && firstItem.id) {
+            if (firstItem.name) {
+              expect(firstItem.name.length).toBeGreaterThan(0);
+              if (firstItem.description) {
+                expect(firstItem.description.length).toBeGreaterThanOrEqual(0);
+              } else {
+                expect(firstItem.description).toEqual('');
+              }
+            } else {
+              fail('Name should exist');
+            }
+          } else {
+            console.log('No ID found');
+          }
+        } else {
+          console.log('No items found');
+        }
+      } else {
+        fail('Status code should be 200');
+      }
+    });
   });
 
   describe('DELETE /api/items/:id', () => {
