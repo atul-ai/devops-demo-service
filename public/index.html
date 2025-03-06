@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevOps Demo Service</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>DevOps Demo Service</h1>
+      <p>A simple RESTful API for managing items</p>
+    </header>
+    
+    <section class="item-form">
+      <h2>Add New Item</h2>
+      <form id="add-item-form">
+        <div class="form-group">
+          <label for="name">Name:</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="description">Description:</label>
+          <textarea id="description" name="description" rows="3"></textarea>
+        </div>
+        
+        <button type="submit" class="btn">Add Item</button>
+      </form>
+    </section>
+    
+    <section class="item-list">
+      <h2>Items</h2>
+      <div id="items-container">
+        <!-- Items will be displayed here -->
+        <p id="no-items-message">No items found. Add some items using the form above.</p>
+      </div>
+    </section>
+    
+    <footer>
+      <p>DevOps Demo Service &copy; 2023</p>
+    </footer>
+  </div>
+  
+  <script src="script.js"></script>
+</body>
+</html> 
